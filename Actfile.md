@@ -9,7 +9,7 @@ GNU stow replacement written in Go.
 ```ini
 [compile]
     repo="https://github.com/gbraad-dotfiles/gstow"
-    repo_path="~/Projects/gbraad-dotfiles/gstow"
+    repo_path="/home/gbraad/Projects/gbraad-dotfiles/gstow"
     out_path="${HOME}/Projects/gbraad-dotfiles/gstow"
     out_dest="${HOME}/Uploads/gstow"
     flatten=1
@@ -21,13 +21,19 @@ GNU stow replacement written in Go.
 
 ### vars
 ```sh
+# hardcode /home/gbraad instead of ~/
 COMPILE_REPO_LOCAL=$(eval echo "${COMPILE_REPO_PATH}")
+```
+
+### local-build
+```sh evaluate
+go build -buildvcs=false -o gstow ./...
 ```
 
 ### build
 One-shot ephemeral build for local arch.
 
-```sh
+```sh evaluate
 devenv ${DEVENV_FROM} ephemeral -c "cd ${COMPILE_REPO_LOCAL} && go build -buildvcs=false -o gstow ./..."
 ```
 
