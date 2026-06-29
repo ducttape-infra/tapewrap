@@ -46,6 +46,9 @@ nfpms:
     contents:
       - src: ./LICENSE
         dst: /usr/share/licenses/gstow/LICENSE
+      - src: /usr/sbin/gstow
+        dst: /usr/sbin/stow
+        type: symlink
 
 checksum:
   name_template: "checksums.txt"
