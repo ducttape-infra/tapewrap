@@ -1,4 +1,4 @@
-package main
+package gstow
 
 import (
 	"fmt"

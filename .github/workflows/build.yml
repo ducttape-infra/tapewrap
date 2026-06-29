@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "main"
+      - "**"
   pull_request: {}
 
 
@@ -20,36 +20,13 @@ jobs:
       - name: Allow unprivileged userns (workaround)
         uses: gbraad-actions/warpbuild-unprivileged-userns@main
 
-      # This folder will be used with the container
-      - name: Create userdirs
-        run: |
-          cd ${{ github.workspace }}
-          mkdir -p Projects
-          ln -s ${{ github.workspace }}/Projects  ${HOME}/Projects
-          mkdir -p Uploads
-          ln -s ${{ github.workspace }}/Uploads  ${HOME}/Uploads
-
-      - name: Setup environment
-        uses: gbraad-dotfiles/install-action@main
-        with:
-          upstream: true
-
       - name: Checkout gstow repo
         uses: actions/checkout@v6
-        with:
-          repository: gbraad-dotfiles/gstow
-          path: Projects/gbraad-dotfiles/gstow
 
-#      - name: Run action command - build
-#        uses: gbraad-dotfiles/actionfile-action@main
-#        with:
-#          file: Actfile.md
-#          action: build
+      - name: Setup action tool from releases
+        uses: ducttape-infra/actionfile-install-action@v0.6
 
       - name: Run build action
-        uses: gbraad-actions/zsh-action@main
-        with:
-          run: |
-            cd ${HOME}/Projects/gbraad-dotfiles/gstow
-            action build local
+        run: |
+          action build local
 
