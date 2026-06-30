@@ -1,32 +1,66 @@
-name: compile-project
-run-name: Compile project using Actionfile
+name: gstow build
+run-name: building gstow
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - "**"
+      - "main"
   pull_request: {}
 
-
 jobs:
-  test-compile-project:
+  build:
+    name: build-process
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
 
     steps:
-      - name: Enable linger and create user session (workaround)
-        uses: gbraad-actions/blacksmith-user-session@main
+      - uses: actions/checkout@v4
 
-      - name: Allow unprivileged userns (workaround)
-        uses: gbraad-actions/warpbuild-unprivileged-userns@main
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
 
-      - name: Checkout gstow repo
-        uses: actions/checkout@v6
-
-      - name: Setup action tool from releases
-        uses: ducttape-infra/actionfile-install-action@v0.6
-
-      - name: Run build action
+      - name: Build binaries
         run: |
-          action build local
+          make cross
 
+      - name: Run tests
+        run: |
+          go test ./...
+
+      - name: Upload Artifact - linux amd64
+        uses: actions/upload-artifact@v4
+        with:
+          name: tapewrap-linux-amd64
+          path: out/tapewrap-linux-amd64
+          retention-days: 5
+
+      - name: Upload Artifact - linux arm64
+        uses: actions/upload-artifact@v4
+        with:
+          name: tapewrap-linux-arm64
+          path: out/tapewrap-linux-arm64
+          retention-days: 5
+
+      - name: Upload Artifact - darwin amd64
+        uses: actions/upload-artifact@v4
+        with:
+          name: tapewrap-darwin-amd64
+          path: out/tapewrap-darwin-amd64
+          retention-days: 5
+
+      - name: Upload Artifact - darwin arm64
+        uses: actions/upload-artifact@v4
+        with:
+          name: tapewrap-darwin-arm64
+          path: out/tapewrap-darwin-arm64
+          retention-days: 5
+
+      - name: Upload Artifact - windows amd64
+        uses: actions/upload-artifact@v4
+        with:
+          name: tapewrap-windows-amd64.exe
+          path: out/tapewrap-windows-amd64.exe
+          retention-days: 5
