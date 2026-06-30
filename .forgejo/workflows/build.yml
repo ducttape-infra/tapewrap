@@ -1,0 +1,31 @@
+name: tapewrap build
+run-name: building tapewrap
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+  pull_request: {}
+
+jobs:
+  build:
+    name: build-process
+    permissions:
+      contents: read
+    runs-on: codeberg-small
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Build binaries
+        run: |
+          make cross
+
+      - name: Run tests
+        run: |
+          go test ./...
